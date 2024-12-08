@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.myapplication.ui.home.HomeFragment"
+        android:label="Inicio"
+        tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/nav_choose_photo"
+        android:name="com.example.myapplication.ui.choosephoto.ChoosePhotoFragment"
+        android:label="Elegir foto"
+        tools:layout="@layout/fragment_choose_photo" />
+    <fragment
+        android:id="@+id/nav_config_methods"
+        android:name="com.example.myapplication.ui.configmethods.ConfigMethodsFragment"
+        android:label="Configuración métodos"
+        tools:layout="@layout/fragment_config_methods" />
+    <fragment
+        android:id="@+id/nav_results"
+        android:name="com.example.myapplication.ui.results.ResultsFragment"
+        android:label="Resultados"
+        tools:layout="@layout/fragment_results" />
+</navigation>
