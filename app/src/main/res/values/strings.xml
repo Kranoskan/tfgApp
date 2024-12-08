@@ -17,7 +17,7 @@
     </string-array>
 
     <string-array name="line_extraction_algorithms">
-        <item>Hough Transform</item>
+        <item>Extraer_Rectas_GC</item>
         <item>RANSAC</item>
     </string-array>
 

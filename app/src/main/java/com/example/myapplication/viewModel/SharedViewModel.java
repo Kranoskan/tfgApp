@@ -6,13 +6,23 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myapplication.core.CalculosPF;
+import com.example.myapplication.core.ExtraerRectasGC;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SharedViewModel extends ViewModel {
 
     private final Map<String, MutableLiveData<String>> algorithmsMap = new HashMap<>();
     private final MutableLiveData<Bitmap> selectedImage = new MutableLiveData<>();
+
+    private MutableLiveData<Bitmap> edgesImageLiveData = new MutableLiveData<>();
+    private MutableLiveData<Bitmap> rectasLiveData = new MutableLiveData<>();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     // Métodos para la imagen seleccionada
     public LiveData<Bitmap> getSelectedImage() {
@@ -46,6 +56,34 @@ public class SharedViewModel extends ViewModel {
             }
         }
         return result;
+    }
+
+    public LiveData<Bitmap> getEdgesImageLiveData() {
+        return edgesImageLiveData;
+    }
+
+
+    public LiveData<Bitmap> getRectasImageLiveData() {
+        return rectasLiveData;
+    }
+
+
+    public void processImage(Bitmap image, Set<Map.Entry<String, String>> algorithmsConfig) {
+        executor.execute(() -> {
+            CalculosPF calculos = new CalculosPF();
+            calculos.setImagen(image);
+            calculos.setConfig(algorithmsConfig);
+            calculos.procesar();
+
+            // Obtener los bordes procesados y actualizar el LiveData
+            Bitmap edgesImage = calculos.getBordes();
+            edgesImageLiveData.postValue(edgesImage);
+
+            ExtraerRectasGC exRectGC = new ExtraerRectasGC();
+            exRectGC.ejecutar(edgesImage);
+            Bitmap rectasImage = exRectGC.getImgResultago();
+            rectasLiveData.postValue(rectasImage);
+        });
     }
 }
 

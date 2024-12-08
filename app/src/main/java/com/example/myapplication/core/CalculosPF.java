@@ -1,35 +1,74 @@
 package com.example.myapplication.core;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
-import java.util.ArrayList;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class CalculosPF {
     Bitmap Image;
-    ArrayList<String> configAlg;
+    Map<String, String> configAlg;
+    Bitmap bordes;
+    Bitmap rectas;
+    Boolean finBordes;
+    private Context context;
+
+    public CalculosPF() {
+        finBordes=false;
+
+    }
 
     public void setImagen(Bitmap inputImage){
         Image=inputImage;
     }
 
     public void setConfig (Set<Map.Entry<String, String>> config){
-        configAlg=new ArrayList<>();
+        if (configAlg == null) {
+            configAlg = new HashMap<>(); // Inicializar si es necesario
+        } else {
+            configAlg.clear(); // Limpiar valores previos si es necesario
+        }
+
         for (Map.Entry<String, String> entry : config) {
-            configAlg.add(entry.getValue());
+            configAlg.put(entry.getKey(), entry.getValue());
         }
     }
 
-    public void procesar() {
+    public CalculosPF(Context context) {
+        this.context = context;
     }
 
-    public Bitmap getImagenes() {
-        return Image;
+    public void procesar() {
+        switch (configAlg.get(CONSTANTES.BORDES)) {
+            case CONSTANTES.SOBEL:
+                BordeSobel bordeSobel = new BordeSobel();
+                bordeSobel.aplicarSobel(Image);
+                bordes = bordeSobel.getResultado();
+                break;
+        }
+        switch (configAlg.get(CONSTANTES.LINEAS)) {
+            case CONSTANTES.GC:
+                ExtraerRectasGC exRectGC = new ExtraerRectasGC();
+                exRectGC.ejecutar(bordes);
+                rectas = exRectGC.getImgResultago();
+                break;
+        }
+    }
+
+
+    public Bitmap getBordes() {
+        return bordes;
     }
 
     public List<List<String>> getTabla() {
         return null;
+    }
+
+    public boolean procesando() {
+        return !finBordes;
     }
 }

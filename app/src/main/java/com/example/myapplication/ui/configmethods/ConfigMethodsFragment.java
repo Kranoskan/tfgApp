@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
+import com.example.myapplication.core.CONSTANTES;
 import com.example.myapplication.viewModel.SharedViewModel;
 
 public class ConfigMethodsFragment extends Fragment {
@@ -29,10 +30,10 @@ public class ConfigMethodsFragment extends Fragment {
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         // Configurar los Spinners
-        setupSpinner(root, R.id.spinner_edge_detection, R.array.edge_detection_algorithms, "edge_detection");
-        setupSpinner(root, R.id.spinner_line_extraction, R.array.line_extraction_algorithms, "line_extraction");
-        setupSpinner(root, R.id.spinner_circle_estimation, R.array.circle_estimation_algorithms, "circle_estimation");
-        setupSpinner(root, R.id.spinner_pf_calculation, R.array.pf_calculation_algorithms, "pf_calculation");
+        setupSpinner(root, R.id.spinner_edge_detection, R.array.edge_detection_algorithms, CONSTANTES.BORDES);
+        setupSpinner(root, R.id.spinner_line_extraction, R.array.line_extraction_algorithms, CONSTANTES.LINEAS);
+        setupSpinner(root, R.id.spinner_circle_estimation, R.array.circle_estimation_algorithms, CONSTANTES.CIRCUNFERENCIAS);
+        setupSpinner(root, R.id.spinner_pf_calculation, R.array.pf_calculation_algorithms, CONSTANTES.PF);
 
         return root;
     }

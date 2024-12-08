@@ -4,67 +4,57 @@ import android.graphics.Color;
 
 public class BordeSobel {
 
-    private Bitmap resultadoBitmap;
+        private Bitmap resultado;
 
+        public void aplicarSobel(Bitmap bitmap) {
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
 
-    public void aplicarSobel(Bitmap bitmap) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
+            // Matrices de Sobel
+            int[][] Gx = {
+                    {-1, 0, 1},
+                    {-2, 0, 2},
+                    {-1, 0, 1}
+            };
 
-        // Crear un nuevo bitmap para almacenar el resultado
-        resultadoBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            int[][] Gy = {
+                    {-1, -2, -1},
+                    { 0,  0,  0},
+                    { 1,  2,  1}
+            };
 
-        // Variables para almacenar los valores de los gradientes en las direcciones X y Y
-        int gx, gy, g;
+            // Crear un nuevo bitmap para almacenar el resultado
+            resultado = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
-        // Iterar sobre cada píxel de la imagen, excepto los bordes
-        for (int x = 1; x < width - 1; x++) {
             for (int y = 1; y < height - 1; y++) {
+                for (int x = 1; x < width - 1; x++) {
 
-                // Obtener los valores de los píxeles vecinos en la vecindad de 3x3
-                int pixel1 = bitmap.getPixel(x - 1, y - 1);  // Arriba a la izquierda
-                int pixel2 = bitmap.getPixel(x, y - 1);      // Arriba
-                int pixel3 = bitmap.getPixel(x + 1, y - 1);  // Arriba a la derecha
-                int pixel4 = bitmap.getPixel(x - 1, y);      // Izquierda
-                int pixel5 = bitmap.getPixel(x, y);          // Centro
-                int pixel6 = bitmap.getPixel(x + 1, y);      // Derecha
-                int pixel7 = bitmap.getPixel(x - 1, y + 1);  // Abajo a la izquierda
-                int pixel8 = bitmap.getPixel(x, y + 1);      // Abajo
-                int pixel9 = bitmap.getPixel(x + 1, y + 1);  // Abajo a la derecha
+                    int sumX = 0;
+                    int sumY = 0;
 
-                // Convertir los píxeles a valores de gris (escala de grises)
-                int gris1 = (Color.red(pixel1) + Color.green(pixel1) + Color.blue(pixel1)) / 3;
-                int gris2 = (Color.red(pixel2) + Color.green(pixel2) + Color.blue(pixel2)) / 3;
-                int gris3 = (Color.red(pixel3) + Color.green(pixel3) + Color.blue(pixel3)) / 3;
-                int gris4 = (Color.red(pixel4) + Color.green(pixel4) + Color.blue(pixel4)) / 3;
-                int gris5 = (Color.red(pixel5) + Color.green(pixel5) + Color.blue(pixel5)) / 3;
-                int gris6 = (Color.red(pixel6) + Color.green(pixel6) + Color.blue(pixel6)) / 3;
-                int gris7 = (Color.red(pixel7) + Color.green(pixel7) + Color.blue(pixel7)) / 3;
-                int gris8 = (Color.red(pixel8) + Color.green(pixel8) + Color.blue(pixel8)) / 3;
-                int gris9 = (Color.red(pixel9) + Color.green(pixel9) + Color.blue(pixel9)) / 3;
+                    // Aplicar los filtros de Sobel
+                    for (int i = -1; i <= 1; i++) {
+                        for (int j = -1; j <= 1; j++) {
+                            int pixel = bitmap.getPixel(x + j, y + i);
+                            int gray = (Color.red(pixel) + Color.green(pixel) + Color.blue(pixel)) / 3;
 
-                // Aplicar el operador Sobel para los gradientes en X y Y
-                gx = (gris1 * -1) + (gris2 * 0) + (gris3 * 1) +
-                        (gris4 * -2) + (gris5 * 0) + (gris6 * 2) +
-                        (gris7 * -1) + (gris8 * 0) + (gris9 * 1);
+                            sumX += gray * Gx[i + 1][j + 1];
+                            sumY += gray * Gy[i + 1][j + 1];
+                        }
+                    }
 
-                gy = (gris1 * -1) + (gris4 * -2) + (gris7 * -1) +
-                        (gris3 * 1) + (gris6 * 2) + (gris9 * 1);
+                    // Magnitud del gradiente
+                    int magnitude = (int) Math.sqrt(sumX * sumX + sumY * sumY);
+                    magnitude = Math.min(255, magnitude); // Limitar a 255
 
-                // Calcular la magnitud del gradiente (módulo)
-                g = (int) Math.sqrt(gx * gx + gy * gy);
-
-                // Limitar el valor de g entre 0 y 255 para representar el color
-                g = Math.min(255, Math.max(0, g));
-
-                // Establecer el color en el pixel resultante
-                resultadoBitmap.setPixel(x, y, Color.rgb(g, g, g));
+                    // Asignar el color al resultado (azul para bordes detectados)
+                    int edgeColor = Color.argb(255, 0, 0, magnitude);
+                    resultado.setPixel(x, y, edgeColor);
+                }
             }
         }
-    }
 
-
-    public Bitmap getResultado() {
-        return resultadoBitmap;
+        public Bitmap getResultado() {
+            return resultado;
+        }
     }
-}
