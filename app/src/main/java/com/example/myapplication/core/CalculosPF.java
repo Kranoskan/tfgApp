@@ -16,6 +16,7 @@ public class CalculosPF {
     Bitmap rectas;
     Boolean finBordes;
     private Context context;
+    private List<ExtraerRectasGC.Line> rectasArray;
 
     public CalculosPF() {
         finBordes=false;
@@ -53,8 +54,8 @@ public class CalculosPF {
         switch (configAlg.get(CONSTANTES.LINEAS)) {
             case CONSTANTES.GC:
                 ExtraerRectasGC exRectGC = new ExtraerRectasGC();
-                exRectGC.ejecutar(bordes);
-                rectas = exRectGC.getImgResultago();
+                rectas=exRectGC.classifyLines(bordes);
+                rectasArray=exRectGC.getClassifiedLines();
                 break;
         }
     }
@@ -68,7 +69,12 @@ public class CalculosPF {
         return null;
     }
 
-    public boolean procesando() {
-        return !finBordes;
+
+    public Bitmap getRectas() {
+        return rectas;
+    }
+
+    public List<ExtraerRectasGC.Line> getRectasArray() {
+        return rectasArray;
     }
 }

@@ -10,6 +10,7 @@ import com.example.myapplication.core.CalculosPF;
 import com.example.myapplication.core.ExtraerRectasGC;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -79,10 +80,10 @@ public class SharedViewModel extends ViewModel {
             Bitmap edgesImage = calculos.getBordes();
             edgesImageLiveData.postValue(edgesImage);
 
-            ExtraerRectasGC exRectGC = new ExtraerRectasGC();
-            exRectGC.ejecutar(edgesImage);
-            Bitmap rectasImage = exRectGC.getImgResultago();
+            Bitmap rectasImage = calculos.getRectas();
             rectasLiveData.postValue(rectasImage);
+
+            List<ExtraerRectasGC.Line>  rectasArray = calculos.getRectasArray();
         });
     }
 }

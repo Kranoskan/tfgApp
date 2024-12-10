@@ -8,5 +8,5 @@ public class CONSTANTES {
     public static final String CIRCUNFERENCIAS= "circle_estimation";
     public static final String PF= "pf_calculation";
     public static final String SOBEL= "Sobel";
-    public static final String GC= "ExtraerRectasGC";
+    public static final String GC= "Extraer_Rectas_GC";
 }
