@@ -12,23 +12,18 @@
     <string name="menu_slideshow">Slideshow</string>
     <string-array name="edge_detection_algorithms">
         <item>Sobel</item>
-        <item>Canny</item>
-        <item>Laplacian</item>
     </string-array>
 
     <string-array name="line_extraction_algorithms">
         <item>Extraer_Rectas_GC</item>
-        <item>RANSAC</item>
     </string-array>
 
-    <string-array name="circle_estimation_algorithms">
-        <item>Hough Circle Transform</item>
-        <item>Least Squares</item>
+    <string-array name="clasificación_rectas">
+        <item>kalantari_clasificacion</item>
     </string-array>
 
     <string-array name="pf_calculation_algorithms">
-        <item>Algorithm A</item>
-        <item>Algorithm B</item>
+        <item>Kalantari_circunferencias</item>
     </string-array>
 
 </resources>

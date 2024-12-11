@@ -7,10 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.core.CalculosPF;
-import com.example.myapplication.core.ExtraerRectasGC;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -23,6 +21,7 @@ public class SharedViewModel extends ViewModel {
 
     private MutableLiveData<Bitmap> edgesImageLiveData = new MutableLiveData<>();
     private MutableLiveData<Bitmap> rectasLiveData = new MutableLiveData<>();
+    private MutableLiveData<Bitmap> rectasAgrupLiveData = new MutableLiveData<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     // Métodos para la imagen seleccionada
@@ -67,6 +66,9 @@ public class SharedViewModel extends ViewModel {
     public LiveData<Bitmap> getRectasImageLiveData() {
         return rectasLiveData;
     }
+    public LiveData<Bitmap> getrectasAgrupLiveData() {
+        return rectasAgrupLiveData;
+    }
 
 
     public void processImage(Bitmap image, Set<Map.Entry<String, String>> algorithmsConfig) {
@@ -83,8 +85,16 @@ public class SharedViewModel extends ViewModel {
             Bitmap rectasImage = calculos.getRectas();
             rectasLiveData.postValue(rectasImage);
 
-            List<ExtraerRectasGC.Line>  rectasArray = calculos.getRectasArray();
+            Bitmap rectasAgrup = calculos.getRectasAgrup();
+            if (rectasAgrup != null) {
+                rectasAgrupLiveData.postValue(rectasAgrup);
+            } else {
+                // Manejo de error o valor nulo
+                rectasAgrupLiveData.postValue(null);
+            }
         });
     }
+
+
 }
 

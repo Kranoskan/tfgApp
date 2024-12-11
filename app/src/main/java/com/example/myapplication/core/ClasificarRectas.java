@@ -1,6 +1,11 @@
 package com.example.myapplication.core;
 
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,18 +13,11 @@ public class ClasificarRectas {
 
     private static final double PI = Math.PI;
 
-    // Constantes para clasificar las rectas
-    private final double I_V; // Inclinación vertical
-    private final double I_H; // Inclinación horizontal
-    private final double I_C; // Inclinación central
-
-    private List<List<ExtraerRectasGC.Line>> rectasClasificadas;
+    private List<List<Line>> rectasClasificadas;
     private int nh, nv, nc, nr, nl; // Contadores para cada tipo de rectas
+    Bitmap bitmap;
 
-    public ClasificarRectas(double iv, double ih, double ic) {
-        this.I_V = iv;
-        this.I_H = ih;
-        this.I_C = ic;
+    public ClasificarRectas() {
         this.rectasClasificadas = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             rectasClasificadas.add(new ArrayList<>());
@@ -31,8 +29,8 @@ public class ClasificarRectas {
         this.nl = 0;
     }
 
-    public void clasificacion(List<ExtraerRectasGC.Line>  rectas) {
-        for (ExtraerRectasGC.Line recta : rectas) {
+    public void clasificacion(List<Line>  rectas) {
+        for (Line recta : rectas) {
             double angulo = calcularAngulo(recta);
 
             if (esHorizontal(angulo)) {
@@ -54,16 +52,19 @@ public class ClasificarRectas {
         }
     }
 
-    private double calcularAngulo(ExtraerRectasGC.Line recta) {
-        // Se asume que las líneas tienen un gradiente representativo del ángulo
+    private double calcularAngulo(Line recta) {
+        if (Double.isNaN(recta.gradient) || Double.isInfinite(recta.gradient)) {
+            // Manejar caso de gradiente inválido
+            return 0;  // O un valor por defecto
+        }
         return Math.atan(recta.gradient);
     }
 
     private boolean esHorizontal(double angulo) {
-        double minH1 = I_H;
-        double maxH1 = 2 * PI - I_H;
-        double minH2 = PI - I_H;
-        double maxH2 = PI + I_H;
+        double minH1 = CONSTANTES.I_H;
+        double maxH1 = 2 * PI - CONSTANTES.I_H;
+        double minH2 = PI - CONSTANTES.I_H;
+        double maxH2 = PI + CONSTANTES.I_H;
 
         return (angulo >= 0 && angulo < minH1) ||
                 (angulo > maxH1 && angulo <= 2 * PI) ||
@@ -71,39 +72,79 @@ public class ClasificarRectas {
     }
 
     private boolean esVertical(double angulo) {
-        double minV1 = PI / 2 - I_V;
-        double maxV1 = PI / 2 + I_V;
-        double minV2 = 1.5 * PI - I_V;
-        double maxV2 = 1.5 * PI + I_V;
+        double minV1 = PI / 2 - CONSTANTES.I_V;
+        double maxV1 = PI / 2 + CONSTANTES.I_V;
+        double minV2 = 1.5 * PI - CONSTANTES.I_V;
+        double maxV2 = 1.5 * PI + CONSTANTES.I_V;
 
         return (angulo > minV1 && angulo < maxV1) ||
                 (angulo > minV2 && angulo < maxV2);
     }
 
-    private boolean esCentro(ExtraerRectasGC.Line recta) {
+    private boolean esCentro(Line recta) {
         // Si la línea cruza el centro (definido por su intersección con C=0)
-        return Math.abs(recta.gradient) <= I_C;
+        return Math.abs(recta.gradient) <= CONSTANTES.I_C;
     }
 
     private boolean esDerecha(double angulo) {
-        double minV1 = PI / 2 + I_V;
-        double maxH1 = 2 * PI - I_H;
+        double minV1 = PI / 2 + CONSTANTES.I_V;
+        double maxH1 = 2 * PI - CONSTANTES.I_H;
         return (angulo >= minV1 && angulo <= PI) ||
                 (angulo >= 1.5 * PI && angulo <= maxH1);
     }
 
     private boolean esIzquierda(double angulo) {
-        double minH1 = I_H;
-        double maxV1 = PI / 2 - I_V;
+        double minH1 = CONSTANTES.I_H;
+        double maxV1 = PI / 2 - CONSTANTES.I_V;
         return (angulo >= minH1 && angulo <= maxV1) ||
                 (angulo >= PI && angulo <= 1.5 * PI);
     }
 
-    public List<List<ExtraerRectasGC.Line>> getRectasClasificadas() {
+    public List<List<Line>> getRectasClasificadas() {
         return rectasClasificadas;
     }
 
     public int[] getContadores() {
         return new int[]{nh, nv, nc, nr, nl};
     }
+
+    public Bitmap generarImagen(int tamX, int tamY) {
+        // Crear el Bitmap de tamaño tamX, tamY
+        bitmap = Bitmap.createBitmap(tamX, tamY, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);  // Crear un Canvas para dibujar en el Bitmap
+        int[] colores = {
+                Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW,
+                Color.CYAN, Color.MAGENTA, Color.GRAY, Color.DKGRAY
+        };
+        // Crear un Paint para las líneas
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);  // Color predeterminado de las líneas
+        paint.setStrokeWidth(3);  // Ancho de la línea
+
+        // Dibujar las líneas clasificadas
+        for (int i = 0; i < rectasClasificadas.size(); i++) {
+            List<Line> lineas = rectasClasificadas.get(i);
+
+            // Asignar un color al subconjunto actual
+            paint.setColor(colores[i % colores.length]); // Si hay más subconjuntos que colores, se repiten los colores
+
+            // Dibujar las líneas del subconjunto
+            for (Line line : lineas) {
+                int startX = line.getStartX();
+                int startY = line.getStartY();
+                int endX = line.getEndX();
+                int endY = line.getEndY();
+
+                // Verificar que las coordenadas de la línea sean válidas
+                if (startX != -1 && startY != -1 && endX != -1 && endY != -1) {
+                    canvas.drawLine(startX, startY, endX, endY, paint);
+                }
+            }
+        }
+
+        // Devolver el Bitmap con las líneas dibujadas
+        return bitmap;
+    }
+
+
 }

@@ -32,7 +32,7 @@ public class ConfigMethodsFragment extends Fragment {
         // Configurar los Spinners
         setupSpinner(root, R.id.spinner_edge_detection, R.array.edge_detection_algorithms, CONSTANTES.BORDES);
         setupSpinner(root, R.id.spinner_line_extraction, R.array.line_extraction_algorithms, CONSTANTES.LINEAS);
-        setupSpinner(root, R.id.spinner_circle_estimation, R.array.circle_estimation_algorithms, CONSTANTES.CIRCUNFERENCIAS);
+        setupSpinner(root, R.id.spinner_circle_estimation, R.array.clasificación_rectas, CONSTANTES.CLASIFICACION);
         setupSpinner(root, R.id.spinner_pf_calculation, R.array.pf_calculation_algorithms, CONSTANTES.PF);
 
         return root;

@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.results;
 
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,7 @@ public class ResultsFragment extends Fragment {
 
     private SharedViewModel sharedViewModel;
     private LinearLayout imagesContainer;
-    private ImageView imageView, edgesImageView, rectasImageView;
+    private ImageView imageView, edgesImageView, rectasImageView, rectasClassImageView;
     private TextView resultsTextView;
     private Button showResultsButton;
     @Nullable
@@ -82,6 +81,16 @@ public class ResultsFragment extends Fragment {
             if (rectasImage != null) {
                 // Mostrar la imagen de rectas
                 rectasImageView.setImageBitmap(rectasImage);
+            }
+        });
+
+        sharedViewModel.getrectasAgrupLiveData().observe(getViewLifecycleOwner(), rectasAgrup -> {
+            if (rectasAgrup != null) {
+                // Mostrar la imagen de rectas agrupadas
+                rectasClassImageView.setImageBitmap(rectasAgrup);
+            } else {
+                // Manejo de caso donde no se obtiene una imagen para rectas agrupadas
+                rectasClassImageView.setImageResource(R.drawable.ic_menu_gallery);
             }
         });
     }

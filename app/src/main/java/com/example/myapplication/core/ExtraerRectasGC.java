@@ -12,15 +12,6 @@ import java.util.Random;
 
 public class ExtraerRectasGC {
 
-    public static class Line {
-        public float gradient;
-        public List<int[]> points; // Lista de puntos que pertenecen a esta línea (x, y)
-
-        public Line(float gradient) {
-            this.gradient = gradient;
-            this.points = new ArrayList<>();
-        }
-    }
 
     // Array para almacenar las rectas clasificadas
     private List<Line> classifiedLines;
