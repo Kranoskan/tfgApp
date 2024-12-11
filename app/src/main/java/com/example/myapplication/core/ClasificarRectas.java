@@ -15,7 +15,6 @@ public class ClasificarRectas {
 
     private List<List<Line>> rectasClasificadas;
     private int nh, nv, nc, nr, nl; // Contadores para cada tipo de rectas
-    Bitmap bitmap;
 
     public ClasificarRectas() {
         this.rectasClasificadas = new ArrayList<>();
@@ -108,14 +107,15 @@ public class ClasificarRectas {
         return new int[]{nh, nv, nc, nr, nl};
     }
 
-    public Bitmap generarImagen(int tamX, int tamY) {
+    public Bitmap generarImagen(Bitmap inputBitmap) {
         // Crear el Bitmap de tamaño tamX, tamY
-        bitmap = Bitmap.createBitmap(tamX, tamY, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);  // Crear un Canvas para dibujar en el Bitmap
-        int[] colores = {
-                Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW,
-                Color.CYAN, Color.MAGENTA, Color.GRAY, Color.DKGRAY
-        };
+        int width = inputBitmap.getWidth();
+        int height = inputBitmap.getHeight();
+
+        // Crear una imagen de salida con las mismas dimensiones
+        Bitmap outputBitmap = Bitmap.createBitmap(width, height, inputBitmap.getConfig());
+        Canvas canvas = new Canvas(outputBitmap);  // Crear un Canvas para dibujar en el Bitmap
+
         // Crear un Paint para las líneas
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);  // Color predeterminado de las líneas
@@ -126,7 +126,7 @@ public class ClasificarRectas {
             List<Line> lineas = rectasClasificadas.get(i);
 
             // Asignar un color al subconjunto actual
-            paint.setColor(colores[i % colores.length]); // Si hay más subconjuntos que colores, se repiten los colores
+            paint.setColor(Color.HSVToColor(new float[]{(i * 360f) / rectasClasificadas.size(), 1f, 1f}));
 
             // Dibujar las líneas del subconjunto
             for (Line line : lineas) {
@@ -143,7 +143,7 @@ public class ClasificarRectas {
         }
 
         // Devolver el Bitmap con las líneas dibujadas
-        return bitmap;
+        return outputBitmap;
     }
 
 

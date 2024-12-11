@@ -26,7 +26,11 @@ public class CalculosPF {
 
     public CalculosPF() {
         finBordes=false;
-
+        Image=null;
+        bordes=null;
+        rectas=null;
+        rectasAgrup=null;
+        circulo=null;
     }
 
     public void setImagen(Bitmap inputImage){
@@ -57,10 +61,11 @@ public class CalculosPF {
                 bordes = bordeSobel.getResultado();
                 break;
         }
+        Bitmap bordes2=bordes.copy(bordes.getConfig(), true);
         switch (configAlg.get(CONSTANTES.LINEAS)) {
             case CONSTANTES.GC:
                 ExtraerRectasGC exRectGC = new ExtraerRectasGC();
-                rectas=exRectGC.classifyLines(bordes);
+                rectas=exRectGC.classifyLines(bordes2);
                 rectasArray=exRectGC.getClassifiedLines();
                 break;
         }
@@ -68,17 +73,10 @@ public class CalculosPF {
             case CONSTANTES.KALANTARI:
                 ClasificarRectas clasificador= new ClasificarRectas();
                 clasificador.clasificacion(rectasArray);
-                rectasAgrup = clasificador.generarImagen(Image.getWidth(), Image.getHeight());
-                rectasClassArray = clasificador.getRectasClasificadas();
+                rectasAgrup=clasificador.generarImagen(bordes2);
+                rectasClassArray=clasificador.getRectasClasificadas();
                 break;
         }
-        /*switch (configAlg.get(CONSTANTES.PF)) {
-            case CONSTANTES.KALANTARI_CIRCUNFERENCIAS:
-                GenerarCirculos circulos = new GenerarCirculos();
-                circulos.calculateCircleFromPoints(rectasArray);
-                circulo=circulos.imgCircunferencia(Image.getWidth(), Image.getHeight());
-                break;
-        }*/
     }
 
 

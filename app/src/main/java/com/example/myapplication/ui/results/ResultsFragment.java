@@ -25,7 +25,7 @@ public class ResultsFragment extends Fragment {
 
     private SharedViewModel sharedViewModel;
     private LinearLayout imagesContainer;
-    private ImageView imageView, edgesImageView, rectasImageView, rectasClassImageView;
+    private ImageView imageView, edgesImageView, rectasImageView, rectasAgrupView;
     private TextView resultsTextView;
     private Button showResultsButton;
     @Nullable
@@ -39,6 +39,7 @@ public class ResultsFragment extends Fragment {
         imageView = root.findViewById(R.id.resultImageView);
         edgesImageView = root.findViewById(R.id.edgesImageView);
         rectasImageView = root.findViewById(R.id.rectasImageView);
+        rectasAgrupView = root.findViewById(R.id.rectasAgrupView);
         resultsTextView = root.findViewById(R.id.resultsTextView);
         showResultsButton = root.findViewById(R.id.showResultsButton);
 
@@ -86,13 +87,13 @@ public class ResultsFragment extends Fragment {
 
         sharedViewModel.getrectasAgrupLiveData().observe(getViewLifecycleOwner(), rectasAgrup -> {
             if (rectasAgrup != null) {
-                // Mostrar la imagen de rectas agrupadas
-                rectasClassImageView.setImageBitmap(rectasAgrup);
-            } else {
-                // Manejo de caso donde no se obtiene una imagen para rectas agrupadas
-                rectasClassImageView.setImageResource(R.drawable.ic_menu_gallery);
+                // Mostrar la imagen del resultado final
+                rectasAgrupView.setImageBitmap(rectasAgrup);
+                rectasAgrupView.setVisibility(View.VISIBLE); // Asegúrate de que sea visible
             }
         });
+
+
     }
 
 

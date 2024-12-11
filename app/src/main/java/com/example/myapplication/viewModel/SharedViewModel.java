@@ -66,35 +66,27 @@ public class SharedViewModel extends ViewModel {
     public LiveData<Bitmap> getRectasImageLiveData() {
         return rectasLiveData;
     }
-    public LiveData<Bitmap> getrectasAgrupLiveData() {
-        return rectasAgrupLiveData;
-    }
+    public LiveData<Bitmap> getrectasAgrupLiveData() { return rectasAgrupLiveData;}
 
 
     public void processImage(Bitmap image, Set<Map.Entry<String, String>> algorithmsConfig) {
         executor.execute(() -> {
+            int a=8;
+            int b=0;
+            int g=6;
+            int r=0;
             CalculosPF calculos = new CalculosPF();
             calculos.setImagen(image);
             calculos.setConfig(algorithmsConfig);
             calculos.procesar();
-
             // Obtener los bordes procesados y actualizar el LiveData
             Bitmap edgesImage = calculos.getBordes();
-            edgesImageLiveData.postValue(edgesImage);
-
             Bitmap rectasImage = calculos.getRectas();
+            Bitmap rectasAgrupImage = calculos.getRectasAgrup();
+            edgesImageLiveData.postValue(edgesImage);
             rectasLiveData.postValue(rectasImage);
-
-            Bitmap rectasAgrup = calculos.getRectasAgrup();
-            if (rectasAgrup != null) {
-                rectasAgrupLiveData.postValue(rectasAgrup);
-            } else {
-                // Manejo de error o valor nulo
-                rectasAgrupLiveData.postValue(null);
-            }
+            rectasAgrupLiveData.postValue(rectasAgrupImage);
         });
     }
-
-
 }
 
